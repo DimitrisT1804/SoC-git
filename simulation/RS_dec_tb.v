@@ -1,31 +1,47 @@
 
-`timescale 1 ns / 1 ps
+//`timescale 1 ns / 1 ps
 module RS_dec_tb;
 
 parameter pclk = 5;     /// period of clk/2 
 
-parameter number = 10;  ///  number of input codewords
+parameter number = 2;  ///  number of input codewords
 
 
-reg clk,reset;
-reg CE;
+//reg clk,reset;
+//reg CE;
 reg [7:0] input_byte;
 
 wire [7:0] Out_byte;
 wire CEO;
 wire Valid_out;
 
-RS_dec  DUT 
-(
-  .clk(clk), // input clock 
-  .reset(reset), // active high asynchronous reset
-  .CE(CE), // chip enable active high flag for one clock with every input byte
-  .input_byte(input_byte), // input byte
+reg clk, reset;
+reg Rx_D;
+//wire [7:0] decoded_data;
+
+//parameter number = 2;  ///  number of input codewords
+
+reg [7:0] in_mem [0:(number*204)-1];
+//reg [7:0] input_byte; 
+integer i;
+wire ce;
+
+wire output_valid;
+
+// RS_dec  DUT 
+// (
+//   .clk(clk), // input clock 
+//   .reset(reset), // active high asynchronous reset
+//   .CE(CE), // chip enable active high flag for one clock with every input byte
+//   .input_byte(input_byte), // input byte
   
-  .Out_byte(Out_byte),   // output byte
-  .CEO(CEO),  // chip enable for the next block will be active high for one clock , every 8 clks
-  .Valid_out(Valid_out) /// valid out for every output block (188 byte)
-);
+//   .Out_byte(Out_byte),   // output byte
+//   .CEO(CEO),  // chip enable for the next block will be active high for one clock , every 8 clks
+//   .Valid_out(Valid_out) /// valid out for every output block (188 byte)
+// );
+
+
+top_module top_module_inst(.clk(clk), .reset(reset), .Rx_D(Rx_D), .decoded_data(Out_byte), .output_valid(output_valid), .ce(ce));
 
 
 
@@ -41,12 +57,11 @@ initial
 begin
 	clk=0;
 	forever #pclk clk=~clk;
-
 end 
 
 
 
-integer ce_t,in_t;	
+integer ce_t,in_t;
 integer lim; // minimum  6
 
 initial 
@@ -58,22 +73,20 @@ begin
 end
 
 
-initial
-begin
-	CE=0;
-	$dumpfile("test2.vcd");
-    $dumpvars(1, RS_dec_tb);
-	@(posedge enable);
-	forever
-	begin
-		@(posedge clk);
-		#2 CE=1;
-		@(posedge clk);
-		#2 CE=0;
-		for(ce_t=0; ce_t<lim; ce_t=ce_t+1)
-			@(posedge clk); 
-	end 
-end
+// initial
+// begin
+// 	CE=0;
+// 	@(posedge enable);
+// 	forever
+// 	begin
+// 		@(posedge clk);
+// 		#2 CE=1;
+// 		@(posedge clk);
+// 		#2 CE=0;
+// 		for(ce_t=0; ce_t<lim; ce_t=ce_t+1)
+// 			@(posedge clk); 
+// 	end 
+// end
 
 initial 
 
@@ -103,6 +116,17 @@ begin
 	begin
 
 		input_byte=in_mem[k];
+		#8640 Rx_D = 0;     // Start bit
+        #8640 Rx_D = input_byte[0];
+        #8640 Rx_D = input_byte[1];
+        #8640 Rx_D = input_byte[2];
+        #8640 Rx_D = input_byte[3];
+        #8640 Rx_D = input_byte[4];
+        #8640 Rx_D = input_byte[5];
+        #8640 Rx_D = input_byte[6];
+        #8640 Rx_D = input_byte[7];
+        #8640 Rx_D = 0;     // parity bit
+        #8640 Rx_D = 1;     // Stop bit
 		
 		@(posedge clk);@(posedge clk);
 		for(in_t=0; in_t < lim; in_t=in_t+1)

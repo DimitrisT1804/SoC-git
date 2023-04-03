@@ -1,13 +1,12 @@
-module top_module(clk, reset, Rx_D, decoded_data, output_valid, ce);
+module top_module(clk, reset, Rx_D, decoded_data, output_valid, ce, CEO);
 
 input clk, reset;
 input Rx_D;
 output [7:0] decoded_data;
-output output_valid;
+output output_valid, CEO;
 
 //reg Rx_D = 1;
 
-wire CEO;
 reg[2:0] baud_select = 3'b111;
 wire [7:0] Rx_DATA;
 wire Rx_VALID;

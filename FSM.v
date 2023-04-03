@@ -30,7 +30,7 @@ else
     current_state <= next_state;
 end
 
-always @(current_state or Rx_VALID or counter or Rx_DATA or output_valid) 
+always @(current_state or Rx_VALID or Rx_DATA or output_valid) 
 begin
     ce = 0;
     //output_byte = 8'b0;
