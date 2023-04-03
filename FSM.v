@@ -33,7 +33,7 @@ end
 always @(current_state or Rx_VALID or counter or Rx_DATA or output_valid) 
 begin
     ce = 0;
-    output_byte = 8'b0;
+    //output_byte = 8'b0;
     next_state = current_state;
     counter_enable = 0;
     data_valid = 0;
@@ -64,10 +64,11 @@ begin
             data_valid = 1;
             ce = 1;
             //counter_enable = 1;
-            if(counter == 8'd204)       // na doume ligo tin timi
-                next_state = state_idle;
+            //if(counter == 8'd206)       // na doume ligo tin timi
+            //if(output_valid)
+            //    next_state = waitning;
 
-            else if(Rx_VALID == 0)
+            if(Rx_VALID == 0)
                 next_state = waitning;
             else
                 next_state = state_sending;

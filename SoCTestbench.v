@@ -1,18 +1,21 @@
-`timescale 1ns/1ns
+//`timescale 1ns/1ns
 module testbench_SoC;
 
 reg clk, reset;
 reg Rx_D;
 wire [7:0] decoded_data;
 
-parameter number = 1;  ///  number of input codewords
+parameter number = 2;  ///  number of input codewords
 
 reg [7:0] in_mem [0:(number*204)-1];
 reg [7:0] input_byte; 
 integer i;
+wire ce;
+
+wire output_valid;
 
 
-top_module top_module_inst(.clk(clk), .reset(reset), .Rx_D(Rx_D), .decoded_data(decoded_data));
+top_module top_module_inst(.clk(clk), .reset(reset), .Rx_D(Rx_D), .decoded_data(decoded_data), .output_valid(output_valid), .ce(ce));
 
 initial 
 begin
@@ -22,6 +25,7 @@ begin
     clk = 0;
     reset = 1;
     $readmemb("input_RS_blocks",in_mem);
+    $monitor("output_valid is: %d and flag is: %d and i is: %d, counter is: %d", output_valid, flag, i, counter_ce);
     Rx_D = 1;           // initializing value
     #10 reset = 0;
     // in_mem[0] = 8'b11101110;
@@ -34,7 +38,7 @@ begin
     // in_mem[7] = 8'b11000100;
 
 
-    for(i = 0; i < 204; i = i+ 1)
+    for(i = 0; i < number*204; i = i+ 1)
     begin
         input_byte = in_mem[i];
         #8640 Rx_D = 0;     // Start bit
@@ -50,10 +54,31 @@ begin
         #8640 Rx_D = 1;     // Stop bit
     end
 
-    if(i == 203)
-        $finish;
+
     
 
+end
+
+reg [1:0] flag = 2'b0;
+always @(output_valid)
+begin
+    if(output_valid)
+    begin
+        flag <= flag + 2'b1;
+    end
+end
+
+always @(flag)
+begin
+    if(flag == 2'd2)
+        #200000 $finish;
+end
+
+reg [7:0] counter_ce = 8'b0;
+always @(ce)
+begin
+    if(ce)
+        counter_ce <= counter_ce + 8'b1;
 end
 
 

@@ -4,7 +4,7 @@ module RS_dec_tb;
 
 parameter pclk = 5;     /// period of clk/2 
 
-parameter number = 100;  ///  number of input codewords
+parameter number = 10;  ///  number of input codewords
 
 
 reg clk,reset;
@@ -41,11 +41,12 @@ initial
 begin
 	clk=0;
 	forever #pclk clk=~clk;
+
 end 
 
 
 
-integer ce_t,in_t;
+integer ce_t,in_t;	
 integer lim; // minimum  6
 
 initial 
@@ -60,6 +61,8 @@ end
 initial
 begin
 	CE=0;
+	$dumpfile("test2.vcd");
+    $dumpvars(1, RS_dec_tb);
 	@(posedge enable);
 	forever
 	begin

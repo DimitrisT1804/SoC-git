@@ -77,7 +77,7 @@ begin
     enable = 1;
     parity_check = 0;
     Rx_VALID = 0;
-    Rx_DATA = 0;
+    //Rx_DATA = 0;
     shift = 0;
     data_valid = 0;
     case(current_state)
