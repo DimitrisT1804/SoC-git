@@ -14,7 +14,7 @@ reg counter_enable;
 
 reg Q1, Q2, data_valid;
 reg ce;
-
+// nai 
 parameter
     state_off = 3'b000,
     state_sending = 3'b001,
