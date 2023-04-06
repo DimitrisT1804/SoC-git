@@ -1,0 +1,65 @@
+# SimVision Command Script (Thu Apr 06 03:39:54 PM EEST 2023)
+#
+# Version 15.20.s038
+#
+# You can restore this configuration with:
+#
+#      ncsim -cdslib /home/inf2020/ireinos/Desktop/SoC-git/cds3.lib -logfile ncsim.log -errormax 15 -status worklib.testbench_SoC:module -input first_Simulation.tcl
+#
+
+
+#
+# Preferences
+#
+preferences set plugin-enable-svdatabrowser-new 1
+preferences set toolbar-sendToIndago-WaveWindow {
+  usual
+  position -pos 1
+}
+preferences set toolbar-Standard-Console {
+  usual
+  position -pos 1
+}
+preferences set toolbar-Search-Console {
+  usual
+  position -pos 2
+}
+preferences set plugin-enable-groupscope 0
+preferences set plugin-enable-interleaveandcompare 0
+preferences set plugin-enable-waveformfrequencyplot 0
+
+#
+# Simulator
+#
+database require simulator -hints {
+	simulator "ncsim -gui -cdslib /home/inf2020/ireinos/Desktop/SoC-git/cds3.lib -logfile ncsim.log -errormax 15 -status worklib.testbench_SoC:module -input first_Simulation.tcl"
+}
+
+#
+# Mnemonic Maps
+#
+mmap new -reuse -name {Boolean as Logic} -radix %b -contents {{%c=FALSE -edgepriority 1 -shape low}
+{%c=TRUE -edgepriority 1 -shape high}}
+mmap new -reuse -name {Example Map} -radix %x -contents {{%b=11???? -bgcolor orange -label REG:%x -linecolor yellow -shape bus}
+{%x=1F -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=2C -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=* -label %x -linecolor gray -shape bus}}
+
+#
+# Design Browser windows
+#
+if {[catch {window new WatchList -name "Design Browser 1" -geometry 1920x1007+0+0}] != ""} {
+    window geometry "Design Browser 1" 1920x1007+0+0
+}
+window target "Design Browser 1" on
+browser using {Design Browser 1}
+browser set -scope [subst  {simulator::[format {testbench_SoC}]} ]
+browser set \
+    -signalsort name
+browser yview see [subst  {simulator::[format {testbench_SoC}]} ]
+browser timecontrol set -lock 0
+
+#
+# Layout selection
+#
+

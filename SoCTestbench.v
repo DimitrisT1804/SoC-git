@@ -5,8 +5,8 @@ reg clk, reset;
 reg Rx_D;
 wire [7:0] decoded_data;
 
-parameter number = 2;  ///  number of input codewords
-parameter iterations = 1;
+parameter number = 3;  ///  number of input codewords
+parameter iterations = 2;
 
 reg [7:0] in_mem [0:(number*204)-1], out_mem[0:(number*188)-1];
 reg [7:0] input_byte; 
@@ -14,6 +14,7 @@ integer i;
 wire ce, CEO;
 
 wire output_valid;
+integer h,k,err;
 
 
 
@@ -32,14 +33,7 @@ begin
     //$monitor("output_valid is: %d and flag is: %d and i is: %d, counter is: %d", output_valid, flag, i, counter_ce);
     Rx_D = 1;           // initializing value
     #10 reset = 0;
-    // in_mem[0] = 8'b11101110;
-    // in_mem[1] = 8'b11110110;
-    // in_mem[2] = 8'b11011100;
-    // in_mem[3] = 8'b01011110;
-    // in_mem[4] = 8'b10100111;
-    // in_mem[5] = 8'b01110101;
-    // in_mem[6] = 8'b00110111;
-    // in_mem[7] = 8'b11000100;
+
 
     for(i = 0; i < (205+(iterations*204)); i = i+ 1)
     begin
@@ -72,12 +66,6 @@ begin
     end
 end
 
-// always @(flag)
-// begin
-//     if(flag == 2'd2)
-//         #200000 $finish;
-// end
-
 reg [7:0] counter_ce = 8'b0;
 always @(ce)
 begin
@@ -89,7 +77,6 @@ end
 always #5 clk = ~clk;
 
 reg [7:0] true_out;
-integer h,k,err;
 
 always @ (posedge(clk))
 begin

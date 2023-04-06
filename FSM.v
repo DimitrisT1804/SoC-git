@@ -10,11 +10,11 @@ input output_valid;
 
 reg [7:0] counter;
 reg [2:0] current_state, next_state;
-reg counter_enable;
+//reg counter_enable;
 
 reg Q1, Q2, data_valid;
 reg ce;
-// nai 
+
 parameter
     state_off = 3'b000,
     state_sending = 3'b001,
@@ -33,9 +33,8 @@ end
 always @(current_state or Rx_VALID or Rx_DATA or output_valid) 
 begin
     ce = 0;
-    //output_byte = 8'b0;
     next_state = current_state;
-    counter_enable = 0;
+    // counter_enable = 0;
     data_valid = 0;
 
     case(current_state)
@@ -47,26 +46,21 @@ begin
         waitning:
         begin
             if(Rx_VALID)
-                next_state = counter_activate;
+                next_state = state_sending;
             else
                 next_state = waitning;
         end
 
-        counter_activate:
-        begin
-            counter_enable = 1;
-            next_state = state_sending;
-        end
+        // counter_activate:
+        // begin
+        //     counter_enable = 1;
+        //     next_state = state_sending;
+        // end
 
         state_sending : 
         begin 
-            //output_byte = Rx_DATA;
             data_valid = 1;
             ce = 1;
-            //counter_enable = 1;
-            //if(counter == 8'd206)       // na doume ligo tin timi
-            //if(output_valid)
-            //    next_state = waitning;
 
             if(Rx_VALID == 0)
                 next_state = waitning;
@@ -74,27 +68,27 @@ begin
                 next_state = state_sending;
 
         end
-        state_idle:
-        begin
-            if(output_valid)
-                next_state = waitning;
-            else
-                next_state = current_state;
-        end
+        // state_idle:
+        // begin
+        //     if(output_valid)
+        //         next_state = waitning;
+        //     else
+        //         next_state = current_state;
+        // end
     endcase
 end
 
 
-always@(posedge clk)
-begin
-    if(reset)
-        counter <= 8'b0;
-    else
-    begin
-    if(counter_enable)
-        counter <= counter + 8'b1;
-    end
-end
+// always@(posedge clk)
+// begin
+//     if(reset)
+//         counter <= 8'b0;
+//     else
+//     begin
+//     if(counter_enable)
+//         counter <= counter + 8'b1;
+//     end
+// end
 
 
 always @(posedge clk)       // kati san antibounce gia na kratiso ton palmo gia ena kiklo rologioy
@@ -121,17 +115,5 @@ begin
             output_byte <= Rx_DATA;
     end
 end
-
-
-// always @(posedge clk)
-// begin
-//     if(reset)
-//         counter_for_RxValid <= 6'b0;
-//     else
-//     begin
-//         if(counter_Rx_enable)
-//             counter_for_RxValid <= counter_for_RxValid + 1;
-//     end
-// end
 
 endmodule
