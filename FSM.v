@@ -19,7 +19,7 @@ parameter
     state_off = 3'b000,
     state_sending = 3'b001,
     state_idle = 3'b010,
-    waitning = 3'b011,
+    state_waiting = 3'b011,
     counter_activate = 3'b100;
 
 always @(posedge clk) 
@@ -40,15 +40,15 @@ begin
     case(current_state)
         state_off : 
         begin
-            next_state = waitning;
+            next_state = state_waiting;
         end
 
-        waitning:
+        state_waiting:
         begin
             if(Rx_VALID)
                 next_state = state_sending;
             else
-                next_state = waitning;
+                next_state = state_waiting;
         end
 
         // counter_activate:
@@ -63,7 +63,7 @@ begin
             ce = 1;
 
             if(Rx_VALID == 0)
-                next_state = waitning;
+                next_state = state_waiting;
             else
                 next_state = state_sending;
 
@@ -71,7 +71,7 @@ begin
         // state_idle:
         // begin
         //     if(output_valid)
-        //         next_state = waitning;
+        //         next_state = state_waiting;
         //     else
         //         next_state = current_state;
         // end
