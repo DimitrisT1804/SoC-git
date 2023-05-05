@@ -18,9 +18,9 @@ reg ce;
 parameter
     state_off = 3'b000,
     state_sending = 3'b001,
-    state_idle = 3'b010,
-    state_waiting = 3'b011,
-    counter_activate = 3'b100;
+    //state_idle = 3'b010,
+    state_waiting = 3'b011;
+    //counter_activate = 3'b100;
 
 always @(posedge clk) 
 begin
@@ -32,19 +32,23 @@ end
 
 always @(current_state or Rx_VALID or Rx_DATA or output_valid) 
 begin
-    ce = 0;
-    next_state = current_state;
-    // counter_enable = 0;
-    data_valid = 0;
+    // ce = 0;
+    // next_state = current_state;
+    // data_valid = 0;
 
     case(current_state)
         state_off : 
         begin
+            ce = 0;
+            next_state = current_state;
+            data_valid = 0;
             next_state = state_waiting;
         end
 
         state_waiting:
         begin
+            ce = 0;
+            data_valid = 0;
             if(Rx_VALID)
                 next_state = state_sending;
             else

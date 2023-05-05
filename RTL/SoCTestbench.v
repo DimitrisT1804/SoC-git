@@ -5,8 +5,8 @@ reg clk, reset;
 reg Rx_D;
 wire [7:0] decoded_data;
 
-parameter number = 3;  ///  number of input codewords
-parameter iterations = 2;
+parameter number = 2;  ///  number of input codewords
+parameter iterations = 1;
 
 reg [7:0] in_mem [0:(number*204)-1], out_mem[0:(number*188)-1];
 reg [7:0] input_byte; 
@@ -91,7 +91,7 @@ begin
 				end
 			h=h+1;
 			
-			if(h== (number*188) )
+			if(h == (number*188) )
 				begin
 					if (err == 0)
 						$display("No Errors !!!!!!!!!!!!!");

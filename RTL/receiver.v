@@ -73,17 +73,21 @@ end
 
 always @(current_state or Rx_D or counter or sampling or Rx_EN or tmp)
 begin
-    next_state = current_state;
-    enable = 1;
-    parity_check = 0;
-    Rx_VALID = 0;
-    //Rx_DATA = 0;
-    shift = 0;
-    data_valid = 0;
+    // next_state = current_state;
+    // enable = 1;
+    // parity_check = 0;
+    // Rx_VALID = 0;
+    // //Rx_DATA = 0;
+    // shift = 0;
+    // data_valid = 0;
     case(current_state)
        r_off:
         begin
-            //enable = 0;
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            shift = 0;
+            data_valid = 0;
             if(Rx_EN == 1)
                 next_state = idle;
             else
@@ -92,10 +96,14 @@ begin
         
         idle:
         begin
-            //enable = 0;
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            shift = 0;
+            data_valid = 0;
             if(Rx_D == 0)
             begin
-                enable = 1;
+                //enable = 1;
                 next_state = r_start_bit;
             end
             else
@@ -115,6 +123,11 @@ begin
 
         r_start_bit:    // prepei na elegxo kai an einai ontos 0
             begin
+                parity_check = 0;
+                Rx_VALID = 0;
+                //Rx_DATA = 0;
+                shift = 0;
+                data_valid = 0;
                 if(counter == 4'b1000)
                 begin
                     next_state = r_data_0;
@@ -122,101 +135,164 @@ begin
                     enable = 0;
                 end
                 else
+                begin
                     next_state = r_start_bit;
+                    enable = 1;
+                end
             
             end
 
         r_data_0:       // kathe fora poy erxetai to minima sampling me diaforetiko arithmo paei sto epomeno
         begin
-            //enable = 1;
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0001)
             begin
                 shift = 1;
                 next_state = r_data_1;
             end
             else
+            begin
                 next_state = r_data_0;
+                shift = 0;
+            end
         end
 
         r_data_1:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0010)
             begin
                 shift = 1;
                 next_state = r_data_2;
             end
             else
+            begin
                 next_state = r_data_1;
+                shift = 0;
+            end
         end
 
         r_data_2:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0011)
             begin
                 shift = 1;
                 next_state = r_data_3;
             end
             else
+            begin
                 next_state = r_data_2;
+                shift = 0;
+            end
         end
 
         r_data_3:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0100)
             begin
                 shift = 1;
                 next_state = r_data_4;
             end
             else
+            begin
                 next_state = r_data_3;
+                shift = 0;
+            end
         end   
 
         r_data_4:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0101)
             begin
                 shift = 1;
                 next_state = r_data_5;
             end
             else
+            begin
                 next_state = r_data_4;
+                shift = 0;
+            end
         end     
 
         r_data_5:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0110)
             begin
                 shift = 1;
                 next_state = r_data_6;
             end
             else
+            begin
                 next_state = r_data_5;
+                shift = 0;
+            end
         end
 
         r_data_6:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b0111)
             begin
                 shift = 1;
                 next_state = r_data_7;
             end
             else
+            begin
                 next_state = r_data_6;
+                shift = 0; 
+            end
         end
 
         r_data_7:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
             if(sampling == 4'b1000)
             begin
                 shift = 1;
                 next_state = r_parity_bit;
             end
             else
+            begin
                 next_state = r_data_7;
+                shift = 0;
+            end
         end
 
         r_parity_bit:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
+            shift = 0;
 
             if(sampling == 4'b1001)
             begin
@@ -230,10 +306,18 @@ begin
                     //next_state = parity_error;
                 //end
             end
+            else
+                next_state = current_state;
+            
         end
 
         r_stop_bit:
         begin
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
+            shift = 0;
             if(sampling == 4'b1010)
             begin
                 //if(Rx_D == 1)
@@ -241,14 +325,20 @@ begin
                 //else
                   //  next_state = frame_error;
             end
+            else
+                next_state = current_state;
         end
     
         valid:
         begin
+            parity_check = 0;
+            shift = 0;
             if (Rx_D == 0)
             begin
                 enable = 0;
                 next_state = r_start_bit;
+                Rx_VALID = 0;
+                data_valid = 0;
             end
             else
             begin
@@ -256,12 +346,17 @@ begin
                 Rx_VALID = 1;
 //                Rx_DATA = tmp;
                 data_valid = 1;
+                enable = 1;
             end
         end
 
         parity_error:
         begin
             //Rx_PERROR = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
+            shift = 0;
             if(Rx_EN == 0)
             begin
                 enable = 0;
@@ -269,6 +364,7 @@ begin
             end
             else
             begin
+                enable = 1;
                 next_state = parity_error;
             end
         end
@@ -276,6 +372,10 @@ begin
         frame_error:
         begin
             //Rx_FERROR = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            data_valid = 0;
+            shift = 0;
             if(Rx_EN == 0)
             begin
                 enable = 0;
@@ -284,12 +384,20 @@ begin
             else
             begin
                 next_state = frame_error;
+                enable = 1;
             end
         end
 
         default:
+        begin
             //$monitor("error");
             next_state = r_off;
+            enable = 1;
+            parity_check = 0;
+            Rx_VALID = 0;
+            shift = 0;
+            data_valid = 0;
+        end
     endcase
 end
 
