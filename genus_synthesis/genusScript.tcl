@@ -1,31 +1,33 @@
-set RTL ""
-set SYNC ""
+zset RTL "/run/media/dtsalapatas/C840-06DD/SoC-git/RTL"
+set SYNC "/run/media/dtsalapatas/C840-06DD/SoC-git/out"
 
-set libpath ""
+set libpath "/run/media/dtsalapatas/C840-06DD/NangateOpenCellLibrary_PDKv1_3_v2010_12/Front_End/Liberty/CCS"
 
-set_db library [glob $libpath/]
+set_db library [glob $libpath/NangateOpenCellLibrary_worst_low_ccs.lib]
 
-set VERILOG_FILES [list 
-    \ $RTL/top.v 
-    \ $RTL/FSM.v
-    \ $RTL/BM_lamda.v
-    \ $RTL/DP_RAM.v
-    \ $RTL/error_correction.v
-    \ $RTL/GF_matrix_ascending_binary.v
-    \ $RTL/GF_matrix_dec.v
-    \ $RTL/GF_mult_add_syndromes.v
-    \ $RTL/input_syndromes.v
-    \ $RTL/lamda_roots.v
-    \ $RTL/Omega_Phy.v
-    \ $RTL/out_stage.v
-    \ $RTL/part A.v
-    \ $RTL/receiver.v
-    \ $RTL/RS_dec.v
-    \ $RTL/SIPO.v
-    \ $RTL/transport_in2out.v
-]
+# set VERILOG_FILES [list 
+#     \ $RTL/top.v 
+#     \ $RTL/FSM.v
+#     \ $RTL/BM_lamda.v
+#     \ $RTL/DP_RAM.v
+#     \ $RTL/error_correction.v
+#     \ $RTL/GF_matrix_ascending_binary.v
+#     \ $RTL/GF_matrix_dec.v
+#     \ $RTL/GF_mult_add_syndromes.v
+#     \ $RTL/input_syndromes.v
+#     \ $RTL/lamda_roots.v
+#     \ $RTL/Omega_Phy.v
+#     \ $RTL/out_stage.v
+#     \ $RTL/part A.v
+#     \ $RTL/receiver.v
+#     \ $RTL/RS_dec.v
+#     \ $RTL/SIPO.v
+#     \ $RTL/transport_in2out.v
+# ]
 
-set top_module_name "top_module"
+set VERILOG_FILES {$RTL/top.v $RTL/FSM.v $RTL/BM_lamda.v $RTL/DP_RAM.v $RTL/error_correction.v $RTL/GF_matrix_ascending_binary.v $RTL/GF_matrix_dec.v $RTL/GF_mult_add_syndromes.v $RTL/input_syndromes.v $RTL/lamda_roots.v $RTL/Omega_Phy.v $RTL/out_stage.v $RTL/part A.v $RTL/receiver.v $RTL/RS_dec.v $RTL/SIPO.v $RTL/transport_in2out.v}
+
+set top_module_name "top.v"
 
 read_hdl $VERILOG_FILES
 
