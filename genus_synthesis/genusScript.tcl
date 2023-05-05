@@ -1,7 +1,12 @@
-zset RTL "/run/media/dtsalapatas/C840-06DD/SoC-git/RTL"
-set SYNC "/run/media/dtsalapatas/C840-06DD/SoC-git/out"
+# set RTL "/run/media/dtsalapatas/C840-06DD/SoC-git/RTL"
+# set SYNC "/run/media/dtsalapatas/C840-06DD/SoC-git/out"
+# 
+# set libpath "/run/media/dtsalapatas/C840-06DD/NangateOpenCellLibrary_PDKv1_3_v2010_12/Front_End/Liberty/CCS"
 
-set libpath "/run/media/dtsalapatas/C840-06DD/NangateOpenCellLibrary_PDKv1_3_v2010_12/Front_End/Liberty/CCS"
+set RTL "./RTL"
+set SYNC "./out"
+
+set libpath "../NangateOpenCellLibrary_PDKv1_3_v2010_12/Front_End/Liberty/CCS"
 
 set_db library [glob $libpath/NangateOpenCellLibrary_worst_low_ccs.lib]
 
@@ -25,9 +30,9 @@ set_db library [glob $libpath/NangateOpenCellLibrary_worst_low_ccs.lib]
 #     \ $RTL/transport_in2out.v
 # ]
 
-set VERILOG_FILES {$RTL/top.v $RTL/FSM.v $RTL/BM_lamda.v $RTL/DP_RAM.v $RTL/error_correction.v $RTL/GF_matrix_ascending_binary.v $RTL/GF_matrix_dec.v $RTL/GF_mult_add_syndromes.v $RTL/input_syndromes.v $RTL/lamda_roots.v $RTL/Omega_Phy.v $RTL/out_stage.v $RTL/part A.v $RTL/receiver.v $RTL/RS_dec.v $RTL/SIPO.v $RTL/transport_in2out.v}
+set VERILOG_FILES {./FSM.v ./BM_lamda.v ./DP_RAM.v ./error_correction.v ./GF_matrix_ascending_binary.v ./GF_matrix_dec.v ./GF_mult_add_syndromes.v ./input_syndromes.v ./lamda_roots.v ./Omega_Phy.v ./out_stage.v ./part_A.v ./receiver.v ./RS_dec.v ./SIPO.v ./transport_in2out.v ./top.v}
 
-set top_module_name "top.v"
+set top_module_name "top_module"
 
 read_hdl $VERILOG_FILES
 
@@ -45,13 +50,14 @@ uniquify $top_module_name
 check_design $top_module_name
 
 # for {set clk_period 10} {$clk_period > 1} {set clk_period [expr {$clk_period - 1}]} {
-set clk_period 10
-create_clock -name clk -period $clk_period
+set clk_period 2
+create_clock -name clk -period $clk_period -waveform {0 1} [get_ports clk]
+#set clock [define_clock -period ${clk_period} -name ${clk} [clock_ports]]	
 
 set_input_delay 0 -clock clk [all_inputs]
 set_output_delay 0 -clock clk [all_outputs]
 
-set OUTPUT_DIR "$SYNC/${clk_period}ns_CCSlib"
+set OUTPUT_DIR "$SYNC/${clk_period}ns2_CCSlib"
 
 if { [catch { exec mkdir $OUTPUT_DIR }] == 1 } {
   exec rm -rf $OUTPUT_DIR
@@ -64,12 +70,13 @@ set_db auto_ungroup none
 syn_generic
 set_db syn_map_effort low
 syn_map
-set_db syn_opt_effort low 
+set_db syn_opt_effort low
 syn_opt
 syn_opt -incremental
 
 # Write out the reports
 check_design $top_module_name > "$OUTPUT_DIR/check_design.log"
+#-lint
 report_timing > "$OUTPUT_DIR/timing.log"
 report_area   > "$OUTPUT_DIR/area.log"
 report_power  > "$OUTPUT_DIR/power.log"
@@ -77,6 +84,8 @@ report_power  > "$OUTPUT_DIR/power.log"
 # Write out netlist and sdc files
 write_hdl -mapped >  "$OUTPUT_DIR/${top_module_name}_${clk_period}ns.v"
 write_sdc >  "$OUTPUT_DIR/out.sdc"
+
+write_sdf > "$OUTPUT_DIR/out.sdf"
 # }
 
 quit
