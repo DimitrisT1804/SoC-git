@@ -1,4 +1,4 @@
-module FSM_Reed (clk, reset, Rx_DATA, Rx_VALID, ce_out, output_byte, output_valid);
+module FSM_Reed (clk, reset, Rx_DATA, Rx_VALID, ce_out, output_byte);
 
 input clk;
 input reset;
@@ -6,7 +6,6 @@ input [7:0] Rx_DATA;
 input Rx_VALID;
 output ce_out;
 output reg [7:0] output_byte;
-input output_valid;
 
 reg [7:0] counter;
 reg [2:0] current_state, next_state;
@@ -30,7 +29,7 @@ else
     current_state <= next_state;
 end
 
-always @(current_state or Rx_VALID or Rx_DATA or output_valid) 
+always @(current_state or Rx_VALID or Rx_DATA) 
 begin
     // ce = 0;
     // next_state = current_state;
@@ -40,7 +39,6 @@ begin
         state_off : 
         begin
             ce = 0;
-            next_state = current_state;
             data_valid = 0;
             next_state = state_waiting;
         end
@@ -79,6 +77,12 @@ begin
         //     else
         //         next_state = current_state;
         // end
+        default
+        begin
+               ce = 0;
+             next_state = current_state;
+             data_valid = 0; 
+        end
     endcase
 end
 
