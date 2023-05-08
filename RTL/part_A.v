@@ -8,7 +8,7 @@ reg [14:0] counter;
 reg [14:0] limit;
 reg check;
 
-parameter clk_value = 10;       // ama px 100ns vazoume 10
+// parameter clk_value = 10;       // ama px 100ns vazoume 10
 
 always @(baud_select)
 begin
@@ -20,7 +20,7 @@ begin
         3'b100: limit = 326;   
         3'b101: limit = 163;     
         3'b110: limit = 109;     
-        3'b111: limit = 542/clk_value;     
+        3'b111: limit = 54;     
 
     endcase 
 end
