@@ -5,8 +5,8 @@ reg clk, reset;
 reg Rx_D;
 wire [7:0] decoded_data;
 
-parameter number = 3;  ///  number of input codewords
-parameter iterations = 2;
+parameter number = 2;  ///  number of input codewords
+parameter iterations = 1;
 
 reg [7:0] in_mem [0:(number*204)-1], out_mem[0:(number*188)-1];
 reg [7:0] input_byte; 
@@ -16,15 +16,22 @@ wire ce, CEO;
 wire output_valid;
 integer h,k,err;
 
+reg [2:0] baud_select;
+reg Rx_EN;
+
 
 
 initial 
 begin
 
     $dumpfile("test.vcd");
-    $dumpvars(1, testbench_SoC, testbench_SoC.top_module_inst, testbench_SoC.top_module_inst.uart_reciever_inst, testbench_SoC.top_module_inst.FSM_Reed_inst,testbench_SoC.top_module_inst.RS_dec_inst );
+    $dumpvars(1, testbench_SoC, testbench_SoC.top_module_inst, testbench_SoC.top_module_inst.uart_reciever_inst, testbench_SoC.top_module_inst.FSM_Reed_inst,testbench_SoC.top_module_inst.RS_dec_inst, testbench_SoC.top_module_inst.uart_reciever_inst.Baud_controller_tx_inst);
     clk = 0;
     reset = 1;
+    
+    baud_select = 3'b111;
+    Rx_EN = 1'b1;
+    
     h = 0;
     k = 0;
     err = 0;
@@ -91,7 +98,7 @@ begin
 				end
 			h=h+1;
 			
-			if(h== (number*188) )
+			if(h == (number*188) )
 				begin
 					if (err == 0)
 						$display("No Errors !!!!!!!!!!!!!");
